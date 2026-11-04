@@ -1,0 +1,7 @@
+{
+    "name": "timeline",
+    "private": true,
+    "type": "module",
+    "scripts": { "build": "vite build", "dev": "vite" },
+    "devDependencies": { "vite": "^7.0.0", "laravel-vite-plugin": "^2.0.0" }
+}
