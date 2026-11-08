@@ -30,4 +30,14 @@ class Timeline extends Model
             ? $query->orderBy('position')->orderBy('id')
             : $query->orderBy('event_date')->orderBy('position')->orderBy('id');
     }
+
+    public function isManualSort(): bool
+    {
+        return $this->sort_mode === 'manual';
+    }
+
+    public function isChronologicalSort(): bool
+    {
+        return $this->sort_mode === 'chronological';
+    }
 }

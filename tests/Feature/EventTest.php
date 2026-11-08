@@ -104,4 +104,32 @@ class EventTest extends TestCase
         $this->assertSame('chronological', $timeline->fresh()->sort_mode);
         $this->putJson("/timelines/{$timeline->id}/order", [])->assertUnprocessable();
     }
+
+    public function test_event_helpers_and_timeline_sort_helpers(): void
+    {
+        $timeline = Timeline::create(['name' => 'Timeline Baru', 'sort_mode' => 'manual']);
+        $this->assertTrue($timeline->isManualSort());
+        $this->assertFalse($timeline->isChronologicalSort());
+
+        $upcoming = $timeline->events()->create([
+            'title' => 'Mendatang',
+            'event_date' => now()->addDays(5)->toDateString(),
+            'position' => 0,
+        ]);
+        $past = $timeline->events()->create([
+            'title' => 'Masa Lalu',
+            'event_date' => now()->subDays(5)->toDateString(),
+            'position' => 1,
+        ]);
+
+        $this->assertTrue($upcoming->isUpcoming());
+        $this->assertFalse($upcoming->isPast());
+        $this->assertTrue($past->isPast());
+        $this->assertFalse($past->isUpcoming());
+
+        $this->assertCount(1, $timeline->events()->upcoming()->get());
+        $this->assertTrue($timeline->events()->upcoming()->first()->is($upcoming));
+        $this->assertCount(1, $timeline->events()->past()->get());
+        $this->assertTrue($timeline->events()->past()->first()->is($past));
+    }
 }

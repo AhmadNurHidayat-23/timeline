@@ -20,4 +20,24 @@ class Event extends Model
     {
         return $this->belongsTo(Timeline::class);
     }
+
+    public function isPast(): bool
+    {
+        return $this->event_date->isPast();
+    }
+
+    public function isUpcoming(): bool
+    {
+        return $this->event_date->isFuture() || $this->event_date->isToday();
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('event_date', '>=', now()->toDateString());
+    }
+
+    public function scopePast($query)
+    {
+        return $query->where('event_date', '<', now()->toDateString());
+    }
 }
